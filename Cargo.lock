@@ -483,9 +483,9 @@ dependencies = [
 
 [[package]]
 name = "catppuccin-egui"
-version = "2.0.2"
+version = "3.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a857c0fb69063d858d19972e04c4eee1e3953a6555d121509e917b237a6c30c4"
+checksum = "1d3754c4417c19dc020529b0a3fb5e649afa59b16d49c9231210800ce00891b5"
 dependencies = [
  "egui",
 ]
@@ -1549,15 +1549,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12b6ee2129af8d4fb011108c73d99a1b83a85977f23b82460c0ae2e25bb4b57f"
 
 [[package]]
-name = "itertools"
-version = "0.10.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
-dependencies = [
- "either",
-]
-
-[[package]]
 name = "itoa"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2373,12 +2364,10 @@ dependencies = [
 
 [[package]]
 name = "rust_xlsxwriter"
-version = "0.41.0"
+version = "0.49.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0ce4b605bcb629e94cd12eea904b3a83985e7abdf481eafe559a59eaa83afe0a"
+checksum = "953a68bf704ae7e7cec06c4bbe3110bc92fecc018a48376d024c26de60403f64"
 dependencies = [
- "chrono",
- "itertools",
  "lazy_static",
  "regex",
  "zip",
