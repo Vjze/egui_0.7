@@ -67,7 +67,7 @@ pub async fn qx_client() -> Client<Compat<TcpStream>> {
     config.host("192.168.2.189");
     config.port(1433);
     config.database("login");
-    config.authentication(AuthMethod::sql_server("lotest", "lotest"));
+    config.authentication(AuthMethod::sql_server("hztest", "hztest"));
     config.trust_cert();
     let tcp = TcpStream::connect(config.get_addr()).await.unwrap();
     tcp.set_nodelay(true).unwrap();

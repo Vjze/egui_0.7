@@ -1,7 +1,7 @@
 
 use crate::{Tip, Rec, DataInfo};
 
-use super::{util::{client, client_1, client_2, qx_client, sn_client}};
+use super::util::{client, client_1, client_2, qx_client, sn_client};
 
 use ::chrono::Local;
 use tiberius::time::chrono;
@@ -835,7 +835,7 @@ pub async fn query_job(s: String) -> (Vec<String>, String) {
     str.push_str(" . 工单数量：");
     str.push_str(q_s);
     let mut pn_infos = pn[4..].to_string();
-    let x = job_no.clone();
+    let x = job_no;
     pn_infos.push_str(x);
     let q_i32 = quantity.clone();
     let st = query_job_id(pn_infos.as_str(), q_i32, str, pn, job_no).await;
@@ -882,7 +882,7 @@ pub async fn query_job_id(
             for x in i {
                 let much = x.get::<&str, _>(0).unwrap();
                 let m_i32 = much.parse::<i32>().unwrap();
-                let m_1 = much.clone().to_string();
+                let m_1 = much.to_string();
                 let s = q - m_i32;
                 let s_2 = s.clone().to_string();
                 str_1.push_str(" . 已生成数量：");
@@ -977,7 +977,7 @@ pub async fn add_sn(
     //let mut out_sn = vec![];
     for i in aa_sn..=o_sn {
         x += 1;
-        let job_order_2 = job_order.clone();
+        let job_order_2 = job_order;
         let mut v = vec![];
         let mut sn = start.to_string();
         let i = format!("{:06}", i);
@@ -997,14 +997,14 @@ pub async fn add_sn(
         y += 1;
     }
     let sn_vss = sn_v.clone();
-    let job_order_1 = job_order.clone();
-    let pn_1 = pn.clone();
+    let job_order_1 = job_order;
+    let pn_1 = pn;
     insert_sn(sn_vss, job_order_1, pn_1, rule_id, o_sn).await;
     rv
 }
 pub async fn insert_sn(sn_v: Vec<String>, job_order: &str, pn: &str, rule_id: String, o_sn: i32) {
     let mut client = client().await;
-    let joborder = job_order.clone();
+    let joborder = job_order;
     let prodorder_name = "物料组";
     let sn_type = "SSN";
     let uuid = Uuid::new_v4().to_string().to_uppercase();
@@ -1025,12 +1025,12 @@ pub async fn insert_sn(sn_v: Vec<String>, job_order: &str, pn: &str, rule_id: St
             .unwrap();
     }
     let sn_1 = sn_v.clone();
-    let pn_1 = pn.clone();
+    let pn_1 = pn;
     insert_sn_1(sn_1, job_order, pn_1, rule_id, o_sn).await;
 }
 pub async fn insert_sn_1(sn_v: Vec<String>, job_order: &str, pn: &str, rule_id: String, o_sn: i32) {
     let mut client = client().await;
-    let joborder = job_order.clone();
+    let joborder = job_order;
     let prodorder_name = "物料组";
     let sn_type = "SSN";
     let is_mrb = "N";
@@ -1046,7 +1046,7 @@ pub async fn insert_sn_1(sn_v: Vec<String>, job_order: &str, pn: &str, rule_id: 
     let createtime = Local::now().format("%F %T").to_string();
     let date = Local::now().to_string();
     let strdate = &date.as_str()[..23];
-    let sn_pn = pn.clone();
+    let sn_pn = pn;
     let sql = "(joborder,sn,prodorder_name,IsMrb,Transfertime,UnderWork,used,DonePnOption_id,DoingPnOption_id,NextPnOption_id,Status,now,InTime,GUID,PN,QTY,SN_TYPE)";
     for sn in sn_v {
         let _stream  = client.execute(format!("INSERT into Barcode_status {0} values 
@@ -1059,7 +1059,7 @@ pub async fn insert_sn_1(sn_v: Vec<String>, job_order: &str, pn: &str, rule_id: 
 
 pub async fn select_max_sn(job_order: &str, sn_pn: &str, rule_id: String, o_sn: i32) {
     let mut client_1 = client_1().await;
-    let mut pn = (&sn_pn.clone()[4..]).to_string();
+    let mut pn = (&sn_pn[4..]).to_string();
     pn.push_str(job_order);
     let stream = client_1
         .query(
@@ -1104,7 +1104,7 @@ pub async fn login_user(id: String, pa: String) -> bool {
     let i = id.clone();
     let stream = client
         .query(
-            format!("select worker from login where worker = '{}'", i),
+            format!("select name from login where name = '{}'", i),
             &[&1i32],
         )
         .await
@@ -1125,7 +1125,7 @@ pub async fn login_pass(id: String, p: String) -> bool {
     let i = id.clone();
     let stream = client
         .query(
-            format!("select password from login where worker = '{}'", i),
+            format!("select password from login where name = '{}'", i),
             &[&1i32],
         )
         .await
