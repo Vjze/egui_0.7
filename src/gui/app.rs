@@ -27,7 +27,7 @@ impl App {
         let query_ui = query_ui::Query::new(ctx);
         let bind_ui = bind_ui::Bind::new(ctx);
         let joborder = joborder::JobOrder::new(&ctx);
-        let login_bool = false;
+        let login_bool = true;
         App {
             page: AppPages::default(),
             query_ui,
