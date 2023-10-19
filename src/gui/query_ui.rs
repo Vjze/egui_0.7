@@ -159,11 +159,145 @@ impl Query {
                         ui.add(egui_extras::DatePickerButton::new(date_1).id_source("1"));
                     }
                     ui.spacing_mut().item_spacing.x = 0.0;
-                    ui.add(
-                        egui::TextEdit::singleline(&mut self.sn)
-                            .hint_text("输入SN号或者盒号或者箱号"),
-                    );
+                    let input = egui::TextEdit::singleline(&mut self.sn)
+                            .hint_text("输入SN号或者盒号或者箱号").show(ui);
+                    let input_id = input.response.id;
+                    if input.response.lost_focus()&&ui.input(|i|i.key_pressed(egui::Key::Enter)){
+                        match self.radio {
+                            Enum::SN => {
+                                self.out_button = false;
+                                if self.sn.is_empty() {
+                                    self.sn_none = true;
+                                    return;
+                                } else {
+                                    get_sn_result(s.clone(), tx_3.clone(), tx.clone(), c.clone());
+                                }
+                            }
 
+                            Enum::BoxNo => {
+                                self.out_button = false;
+                                if self.sn.is_empty() {
+                                    if self.check == true {
+                                        let date_1 = self
+                                            .date
+                                            .clone()
+                                            .unwrap()
+                                            .format("%Y-%m-%d 00:00:00")
+                                            .to_string();
+                                        let date_2 = self
+                                            .date_1
+                                            .clone()
+                                            .unwrap()
+                                            .format("%Y-%m-%d 23:59:59")
+                                            .to_string();
+                                        get_box_none_result(date_1, date_2, tx_3.clone(), tx_1.clone(), c.clone());
+                                    } else {
+                                        self.sn_none = true;
+                                        return;
+                                    };
+                                } else {
+                                    get_box_result(s.clone(), tx_3.clone(), tx_4.clone(), c.clone());
+                                }
+                            }
+                            Enum::CartonNo => {
+                                self.out_button = true;
+                                if self.sn.is_empty() {
+                                    if self.check == true {
+                                        let date_1 = self
+                                            .date
+                                            .clone()
+                                            .unwrap()
+                                            .format("%Y-%m-%d 00:00:00")
+                                            .to_string();
+                                        let date_2 = self
+                                            .date_1
+                                            .clone()
+                                            .unwrap()
+                                            .format("%Y-%m-%d 23:59:59")
+                                            .to_string();
+                                        get_carton_none_result(date_1, date_2, tx_3.clone(), tx_2.clone(), c.clone());
+                                    } else {
+                                        self.sn_none = true;
+                                        return;
+                                    }
+                                } else {
+                                    get_carton_result(s.clone(), tx_3.clone(), tx_1.clone(), c.clone())
+                                }
+                            }
+                            Enum::MultipleSn => {
+                                self.out_button = false;
+                                let mut vec_sn = vec![];
+                                // tokio::spawn(async move{
+                                let rt = Runtime::new().unwrap();
+                                rt.block_on(async {
+                                    let res = self.get_sn_file(ui, frame).await;
+                                    match res {
+                                        Ok(mut value) => {
+                                            while let Ok(Some(line)) = value.next_line().await {
+                                                vec_sn.push(line)
+                                            }
+                                        }
+                                        Err(err) => {
+                                            self.cerr = err.to_string();
+                                            self.file_sn_err = true;
+                                            return;
+                                        }
+                                    }
+                                });
+                                if vec_sn.is_empty() {
+                                    self.file_sn_none = true;
+                                    return;
+                                }
+                                get_much_sn(vec_sn, tx_3.clone(), tx.clone(), c.clone())
+                            }
+                            Enum::MultipleCarton => {
+                                let mut vec_carton = vec![];
+                                let rt = Runtime::new().unwrap();
+                                rt.block_on(async {
+                                    let res = self.get_carton_file(ui, frame).await;
+
+                                    match res {
+                                        Ok(mut value) => {
+                                            while let Ok(Some(line)) = value.next_line().await {
+                                                vec_carton.push(line)
+                                            }
+                                        }
+                                        Err(err) => {
+                                            self.cerr = err.to_string();
+                                            self.file_err = true;
+                                            return;
+                                        }
+                                    }
+                                });
+
+                                if vec_carton.is_empty() {
+                                    self.file_carton_none = true;
+                                    return;
+                                }
+                                self.out_button = true;
+                                get_much_carton(vec_carton, tx_3.clone(), tx_1.clone(), c.clone())
+                            }
+                            Enum::WorkerId => {
+                                if self.sn.is_empty() {
+                                    self.sn_none = true;
+                                }
+                                self.out_button = false;
+                                let date_1 = self
+                                    .date
+                                    .clone()
+                                    .unwrap()
+                                    .format("%Y-%m-%d 00:00:00")
+                                    .to_string(); //.format("%Y-%m-%d 00:00:00").to_string();
+                                let date_2 = self
+                                    .date_1
+                                    .clone()
+                                    .unwrap()
+                                    .format("%Y-%m-%d 23:59:59")
+                                    .to_string(); //.format("%Y-%m-%d 23:59:59").to_string();
+                                get_worker(s.clone(), date_1, date_2, tx_3.clone(), tx_1.clone(), c.clone())
+                            }
+                        }
+                };
                     if ui.button("ｘ").clicked() {
                         self.sn.clear();
                         self.teble_data.clear();
