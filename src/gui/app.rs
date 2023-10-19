@@ -1,14 +1,12 @@
-use catppuccin_egui::{FRAPPE, LATTE, MACCHIATO, MOCHA};
-use chrono::Local;
-use crate::AppPages;
-use crate::CatppuccinTheme;
-use crate::ErrDlg;
 use crate::bind_ui;
 use crate::configure_fonts;
-use crate::APP_VERSION;
 use crate::joborder;
 use crate::query_ui;
-use eframe::egui::{self, ComboBox, RichText};
+use crate::AppPages;
+use crate::ErrDlg;
+use crate::APP_VERSION;
+use chrono::Local;
+use eframe::egui::{self, RichText};
 pub struct App {
     page: AppPages,
     query_ui: query_ui::Query,
@@ -16,7 +14,6 @@ pub struct App {
     joborder: joborder::JobOrder,
     login: ErrDlg,
     pub login_bool: bool,
-    theme: CatppuccinTheme,
 }
 
 impl App {
@@ -27,7 +24,7 @@ impl App {
         let query_ui = query_ui::Query::new(ctx);
         let bind_ui = bind_ui::Bind::new(ctx);
         let joborder = joborder::JobOrder::new(&ctx);
-        let login_bool = true;
+        let login_bool = false;
         App {
             page: AppPages::default(),
             query_ui,
@@ -35,13 +32,13 @@ impl App {
             joborder,
             login,
             login_bool,
-            theme: CatppuccinTheme::Mocha,
         }
     }
 
     fn draw_topbar(&mut self, ui: &mut egui::Ui) {
-        ui.horizontal_wrapped(|ui| {
+        ui.with_layout(egui::Layout::top_down(egui::Align::Center), |ui| {
             ui.vertical_centered(|ui| {
+                ui.add_space(150.);
                 ui.selectable_value(&mut self.page, AppPages::Query, "  🔎 数据查询");
                 // ui.separator();
                 ui.selectable_value(&mut self.page, AppPages::Bind, "📌 条码绑定");
@@ -85,15 +82,6 @@ impl App {
 
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        catppuccin_egui::set_theme(
-            ctx,
-            match self.theme {
-                CatppuccinTheme::Frappe => FRAPPE,
-                CatppuccinTheme::Latte => LATTE,
-                CatppuccinTheme::Macchiato => MACCHIATO,
-                CatppuccinTheme::Mocha => MOCHA,
-            },
-        );
         ctx.set_pixels_per_point(1.);
         self.draw_release_footer(ctx);
         if self.login_bool == true {
@@ -106,38 +94,24 @@ impl eframe::App for App {
             egui::CentralPanel::default().show(ctx, |ui| {
                 egui::SidePanel::left("类型")
                     .resizable(false)
-                    .default_width(120.0)
+                    .default_width(180.0)
                     .width_range(80.0..=160.0)
                     .show_inside(ui, |ui| {
                         ui.vertical_centered(|ui| {
-                            ui.heading("功能类型");
+                            let style = (*ui.ctx().style()).clone().visuals.dark_mode;
+                            if style == true {
+                                ui.image(egui::include_image!(
+                                    r"../../resources/logo/logo_dark.png"
+                                ));
+                            } else {
+                                ui.image(egui::include_image!(
+                                    r"../../resources/logo/logo_light.png"
+                                ));
+                            }
                         });
                         self.draw_topbar(ui);
                         ui.with_layout(egui::Layout::bottom_up(egui::Align::Center), |ui| {
-                            ComboBox::from_label("")
-                                .selected_text(format!("{:?}", self.theme))
-                                .show_ui(ui, |ui| {
-                                    ui.selectable_value(
-                                        &mut self.theme,
-                                        CatppuccinTheme::Latte,
-                                        "Latte",
-                                    );
-                                    ui.selectable_value(
-                                        &mut self.theme,
-                                        CatppuccinTheme::Frappe,
-                                        "Frappe",
-                                    );
-                                    ui.selectable_value(
-                                        &mut self.theme,
-                                        CatppuccinTheme::Macchiato,
-                                        "Macchiato",
-                                    );
-                                    ui.selectable_value(
-                                        &mut self.theme,
-                                        CatppuccinTheme::Mocha,
-                                        "Mocha",
-                                    );
-                                });
+                            egui::widgets::global_dark_light_mode_switch(ui);
                         })
                     });
 

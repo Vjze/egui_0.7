@@ -12,7 +12,7 @@ pub use gui::*;
 
 
 pub const APP_NAME: &str = env!("CARGO_PKG_NAME");
-pub const APP_ICON: &[u8] = include_bytes!(r"utils/Logo.ico");
+pub const APP_ICON: &[u8] = include_bytes!(r"../resources/logo/logo.png");
 pub const APP_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
@@ -54,19 +54,12 @@ pub enum Rec {
     UnbindOk,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum CatppuccinTheme {
-    Frappe,
-    Latte,
-    Macchiato,
-    Mocha,
-}
 
 pub fn configure_fonts(ctx: &egui::Context) {
     let mut fonts = eframe::egui::FontDefinitions::default();
     fonts.font_data.insert(
         "my_font".to_owned(),
-        eframe::egui::FontData::from_static(include_bytes!("utils/ht.ttf")),
+        eframe::egui::FontData::from_static(include_bytes!("../resources/assets/SourceHanSansHWSC-Regular.otf")),
     );
 
     fonts

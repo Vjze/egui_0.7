@@ -3,24 +3,24 @@ use std::sync::mpsc::{Receiver, Sender};
 use eframe::egui::{self, *};
 use egui_extras::{Column, TableBuilder};
 
+use crate::get_box_none_result;
+use crate::get_box_result;
+use crate::get_carton_none_result;
+use crate::get_carton_result;
+use crate::get_much_carton;
+use crate::get_much_sn;
+use crate::get_sn_result;
+use crate::get_worker;
+use crate::universal_file_out;
+use crate::CustomError;
+use crate::DataInfo;
+use crate::Enum;
+use crate::ErrDlg;
 use tokio::{
     fs,
     io::{AsyncBufReadExt, BufReader},
     runtime::Runtime,
 };
-use crate::ErrDlg;
-use crate::Enum;
-use crate::DataInfo;
-use crate::get_sn_result;
-use crate::get_box_none_result;
-use crate::get_box_result;
-use crate::get_carton_none_result;
-use crate::get_carton_result;
-use crate::get_much_sn;
-use crate::get_much_carton;
-use crate::get_worker;
-use crate::universal_file_out;
-use crate::CustomError;
 
 pub struct Query {
     tx: Sender<Vec<Vec<String>>>,
@@ -160,9 +160,10 @@ impl Query {
                     }
                     ui.spacing_mut().item_spacing.x = 0.0;
                     let input = egui::TextEdit::singleline(&mut self.sn)
-                            .hint_text("输入SN号或者盒号或者箱号").show(ui);
-                    let input_id = input.response.id;
-                    if input.response.lost_focus()&&ui.input(|i|i.key_pressed(egui::Key::Enter)){
+                        .hint_text("输入SN号或者盒号或者箱号")
+                        .show(ui);
+                    if input.response.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter))
+                    {
                         match self.radio {
                             Enum::SN => {
                                 self.out_button = false;
@@ -190,13 +191,24 @@ impl Query {
                                             .unwrap()
                                             .format("%Y-%m-%d 23:59:59")
                                             .to_string();
-                                        get_box_none_result(date_1, date_2, tx_3.clone(), tx_1.clone(), c.clone());
+                                        get_box_none_result(
+                                            date_1,
+                                            date_2,
+                                            tx_3.clone(),
+                                            tx_1.clone(),
+                                            c.clone(),
+                                        );
                                     } else {
                                         self.sn_none = true;
                                         return;
                                     };
                                 } else {
-                                    get_box_result(s.clone(), tx_3.clone(), tx_4.clone(), c.clone());
+                                    get_box_result(
+                                        s.clone(),
+                                        tx_3.clone(),
+                                        tx_4.clone(),
+                                        c.clone(),
+                                    );
                                 }
                             }
                             Enum::CartonNo => {
@@ -215,13 +227,24 @@ impl Query {
                                             .unwrap()
                                             .format("%Y-%m-%d 23:59:59")
                                             .to_string();
-                                        get_carton_none_result(date_1, date_2, tx_3.clone(), tx_2.clone(), c.clone());
+                                        get_carton_none_result(
+                                            date_1,
+                                            date_2,
+                                            tx_3.clone(),
+                                            tx_2.clone(),
+                                            c.clone(),
+                                        );
                                     } else {
                                         self.sn_none = true;
                                         return;
                                     }
                                 } else {
-                                    get_carton_result(s.clone(), tx_3.clone(), tx_1.clone(), c.clone())
+                                    get_carton_result(
+                                        s.clone(),
+                                        tx_3.clone(),
+                                        tx_1.clone(),
+                                        c.clone(),
+                                    )
                                 }
                             }
                             Enum::MultipleSn => {
@@ -294,10 +317,17 @@ impl Query {
                                     .unwrap()
                                     .format("%Y-%m-%d 23:59:59")
                                     .to_string(); //.format("%Y-%m-%d 23:59:59").to_string();
-                                get_worker(s.clone(), date_1, date_2, tx_3.clone(), tx_1.clone(), c.clone())
+                                get_worker(
+                                    s.clone(),
+                                    date_1,
+                                    date_2,
+                                    tx_3.clone(),
+                                    tx_1.clone(),
+                                    c.clone(),
+                                )
                             }
                         }
-                };
+                    };
                     if ui.button("ｘ").clicked() {
                         self.sn.clear();
                         self.teble_data.clear();

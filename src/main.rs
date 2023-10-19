@@ -24,7 +24,11 @@ async fn main() {
     eframe::run_native(
         APP_NAME,
         native_options,
-        Box::new(|cc| Box::new(App::new(cc))),
-    )
+        
+        Box::new(|cc|{
+            egui_extras::install_image_loaders(&cc.egui_ctx);
+            Box::new(App::new(cc))
+        } 
+    ))
     .unwrap();
 }
